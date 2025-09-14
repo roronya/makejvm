@@ -20,10 +20,7 @@ public class ClassFile {
         buffer.order(ByteOrder.BIG_ENDIAN);
 
         // check magic number
-        long magic = buffer.getInt() & 0xFFFFFFFFL;
-        if (magic != MAGIC_NUMBER) {
-            throw new IOException("invalid magic number");
-        }
+        checkMagicNumber(buffer);
 
         // skip minor major version
         buffer.getInt();
@@ -31,6 +28,20 @@ public class ClassFile {
         // read ConstantPool
         ConstantPool cp = ConstantPool.read(buffer);
 
+        // skip access_flags, this_class, super_classs
+        buffer.position(buffer.position() + 6);
+        // skip interfaces[interface_count]
+        final int ifCount = buffer.getShort() & 0xFFFF;
+        buffer.position(buffer.position() + ifCount * 2);
+
+
         return new ClassFile(cp);
+    }
+
+    static void checkMagicNumber(ByteBuffer buffer) throws IOException {
+        long magic = buffer.getInt() & 0xFFFFFFFFL;
+        if (magic != MAGIC_NUMBER) {
+            throw new IOException("invalid magic number");
+        }
     }
 }

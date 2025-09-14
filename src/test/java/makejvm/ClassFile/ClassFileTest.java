@@ -4,9 +4,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.nio.ByteBuffer;
 
 class ClassFileTest {
     @Nested
@@ -14,17 +13,17 @@ class ClassFileTest {
         @Test
         void validMagicNumber() {
             byte[] bytes = {(byte) 0xCA, (byte) 0xFE, (byte) 0xBA, (byte) 0xBE};
-            InputStream inputStream = new ByteArrayInputStream(bytes);
+            var buffer = ByteBuffer.wrap(bytes);
 
-            Assertions.assertDoesNotThrow(() -> ClassFile.read(inputStream));
+            Assertions.assertDoesNotThrow(() -> ClassFile.checkMagicNumber(buffer));
         }
 
         @Test
         void invalidMagicNumber() {
             byte[] bytes = {(byte) 0xAA, (byte) 0xBB, (byte) 0xCC, (byte) 0xDD};
-            InputStream inputStream = new ByteArrayInputStream(bytes);
+            var buffer = ByteBuffer.wrap(bytes);
 
-            Assertions.assertThrows(IOException.class, () -> ClassFile.read(inputStream));
+            Assertions.assertThrows(IOException.class, () -> ClassFile.checkMagicNumber(buffer));
         }
     }
 
