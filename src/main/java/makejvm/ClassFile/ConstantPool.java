@@ -3,7 +3,7 @@ package makejvm.ClassFile;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 
-class ConstantPool {
+public class ConstantPool {
     private static final int UTF8_TAG = 1;
     private static final int CLASS_TAG = 7;
     private static final int METHOD_REF_TAG = 10;

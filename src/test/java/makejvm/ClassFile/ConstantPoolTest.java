@@ -4,10 +4,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 
 class ConstantPoolTest {
 
@@ -33,37 +31,36 @@ class ConstantPoolTest {
     @Nested
     class read {
         @Test
-        void test() throws IOException {
-            try (
-                    var baos = new ByteArrayOutputStream();
-                    var dos = new DataOutputStream(baos)
-            ) {
+        void test() {
+            // 必要なバイト数 (2 + (1+2+5) + (1+2) + (1+2+2) + (1+2+2) = 23) を確保
+            ByteBuffer buffer = ByteBuffer.allocate(23);
 
-                dos.writeShort(5); // constant_pool_count = 5
+            // メソッドチェーンで順にデータを書き込む
+            buffer.putShort((short) 5) // constant_pool_count = 5
 
-                dos.writeByte(1); // tag = CONSTANT_Utf8_info
-                dos.writeShort(5); // length = 5
-                dos.writeBytes("hello"); // bytes[length] = "hello"
+                    .put((byte) 1) // tag = CONSTANT_Utf8_info
+                    .putShort((short) 5) // length = 5
+                    .put("hello".getBytes(StandardCharsets.UTF_8)) // bytes[length] = "hello"
 
-                dos.writeByte(7); // tag = CONSTANT_Class
-                dos.writeShort(0); // name_index
+                    .put((byte) 7) // tag = CONSTANT_Class
+                    .putShort((short) 0) // name_index
 
-                dos.writeByte(10); // tag = CONSTANT_Methodref
-                dos.writeShort(0); // class_index
-                dos.writeShort(0); // name_and_type_index
+                    .put((byte) 10) // tag = CONSTANT_Methodref
+                    .putShort((short) 0) // class_index
+                    .putShort((short) 0) // name_and_type_index
 
-                dos.writeByte(12); // tag = CONSTANT_NameAndType
-                dos.writeShort(0); // name_index
-                dos.writeShort(0); // descriptor_index
+                    .put((byte) 12) // tag = CONSTANT_NameAndType
+                    .putShort((short) 0) // name_index
+                    .putShort((short) 0); // descriptor_index
 
+            // バッファを書き込みモードから読み取りモードへ切り替える
+            buffer.flip();
 
-                ByteBuffer buffer = ByteBuffer.wrap(baos.toByteArray());
-                ConstantPool cp = ConstantPool.read(buffer);
+            ConstantPool cp = ConstantPool.read(buffer);
 
-                String actual = cp.getUtf8(1);
-                Assertions.assertEquals("hello", actual);
-                // TODO: should check other tags
-            }
+            String actual = cp.getUtf8(1);
+            Assertions.assertEquals("hello", actual);
+            // TODO: should check other tags
         }
     }
 }
