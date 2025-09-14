@@ -4,7 +4,10 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.nio.ByteBuffer;
 
 class ConstantPoolTest {
 
@@ -54,9 +57,8 @@ class ConstantPoolTest {
                 dos.writeShort(0); // descriptor_index
 
 
-                ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-                DataInputStream dis = new DataInputStream(bais);
-                ConstantPool cp = ConstantPool.read(dis);
+                ByteBuffer buffer = ByteBuffer.wrap(baos.toByteArray());
+                ConstantPool cp = ConstantPool.read(buffer);
 
                 String actual = cp.getUtf8(1);
                 Assertions.assertEquals("hello", actual);

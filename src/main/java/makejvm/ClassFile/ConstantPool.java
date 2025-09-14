@@ -1,7 +1,6 @@
 package makejvm.ClassFile;
 
-import java.io.DataInputStream;
-import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 
 class ConstantPool {
@@ -16,25 +15,27 @@ class ConstantPool {
         this.pool = pool;
     }
 
-    public static ConstantPool read(DataInputStream dis) throws IOException {
-        int cpCount = dis.readUnsignedShort(); // read 2 byte
+    public static ConstantPool read(ByteBuffer buffer) {
+        final int cpCount = buffer.getShort() & 0xFFFF;
         CpInfo[] pool = new CpInfo[cpCount];
+
 
         // 1 base index because of JVM specification
         for (int i = 1; i < cpCount; i++) {
-            int tag = dis.readUnsignedByte(); // read 1 byte
+            final int tag = buffer.get() & 0xFF;
             switch (tag) {
                 case UTF8_TAG -> {
-                    int len = dis.readUnsignedShort();
+                    int len = buffer.getShort() & 0xFFFF;
                     byte[] bytes = new byte[len];
-                    dis.readFully(bytes);
+                    buffer.get(bytes);
                     pool[i] = new CpInfo.Utf8CpInfo(new String(bytes, StandardCharsets.UTF_8));
                 }
-                case CLASS_TAG -> pool[i] = new CpInfo.ClassCpInfo(dis.readUnsignedShort());
+                case CLASS_TAG -> pool[i] = new CpInfo.ClassCpInfo(buffer.getShort() & 0xFFFF);
                 case METHOD_REF_TAG ->
-                        pool[i] = new CpInfo.MethodRefCpInfo(dis.readUnsignedShort(), dis.readUnsignedShort());
+                        pool[i] = new CpInfo.MethodRefCpInfo(buffer.getShort() & 0xFFFF, buffer.getShort() & 0xFFFF);
                 case NAME_AND_TYPE_TAG ->
-                        pool[i] = new CpInfo.NameAndTypeCpInfo(dis.readUnsignedShort(), dis.readUnsignedShort());
+                        pool[i] = new CpInfo.NameAndTypeCpInfo(buffer.getShort() & 0xFFFF, buffer.getShort() & 0xFFFF);
+                // TODO: implement handling for other tags.
             }
         }
 
