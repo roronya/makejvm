@@ -10,10 +10,10 @@ public class ClassFile {
 
     public static ClassFile read(InputStream cfInputStream) throws IOException {
         byte[] allBytes = cfInputStream.readAllBytes();
-
         ByteBuffer buffer = ByteBuffer.wrap(allBytes);
         buffer.order(ByteOrder.BIG_ENDIAN);
 
+        // check magic number
         long magic = buffer.getInt() & 0xFFFFFFFFL;
         if (magic != MAGIC_NUMBER) {
             throw new IOException("invalid magic number");
