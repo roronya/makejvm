@@ -1,0 +1,10 @@
+# https://taskfile.dev
+
+version: '3'
+
+tasks:
+  
+  default:
+    cmds:
+      - java src/main/java/makejvm/Main.java src/test/resources/MakeJVM.class
+    silent: true
