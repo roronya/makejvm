@@ -20,6 +20,8 @@ public class Main {
         try (InputStream fis = new FileInputStream(filePath)) {
             ClassFile cf = ClassFile.read(fis);
             System.out.println("Successfully parsed the class file.");
+
+            cf.methods().forEach(System.out::println);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {

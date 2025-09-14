@@ -53,4 +53,8 @@ public class ClassFile {
             throw new IOException("invalid magic number");
         }
     }
+
+    public List<MethodInfo> methods() {
+        return methodInfos;
+    }
 }

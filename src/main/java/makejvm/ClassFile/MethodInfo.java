@@ -19,4 +19,9 @@ public record MethodInfo(int accessFlag, String name, String descriptor, List<At
                 })
                 .toList();
     }
+
+    @Override
+    public String toString() {
+        return name + descriptor;
+    }
 }
