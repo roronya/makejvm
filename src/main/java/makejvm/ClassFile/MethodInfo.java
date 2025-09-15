@@ -28,6 +28,10 @@ public record MethodInfo(int accessFlag, String name, String descriptor, List<At
                 .orElse(null);
     }
 
+    public int getNumArgs() {
+        return descriptor.indexOf(")") - 1;
+    }
+
     @Override
     public String toString() {
         return name + descriptor;

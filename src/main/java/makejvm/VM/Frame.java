@@ -3,7 +3,6 @@ package makejvm.VM;
 import makejvm.ClassFile.MethodInfo;
 
 import java.nio.ByteBuffer;
-import java.util.List;
 import java.util.Stack;
 import java.util.stream.IntStream;
 
@@ -13,7 +12,7 @@ public class Frame {
     private final ByteBuffer code;
     private int pc;
 
-    public Frame(Object[] locals, Stack<Object> opStack, ByteBuffer code, int pc) {
+    private Frame(Object[] locals, Stack<Object> opStack, ByteBuffer code, int pc) {
         this.locals = locals;
         this.opStack = opStack;
         this.code = code;
@@ -69,9 +68,9 @@ public class Frame {
         return opStack.pop();
     }
 
-    public List<Object> popOperands(int n) {
+    public Object[] popOperands(int n) {
         return IntStream.range(0, n)
                 .mapToObj(_ -> opStack.pop())
-                .toList();
+                .toArray();
     }
 }
