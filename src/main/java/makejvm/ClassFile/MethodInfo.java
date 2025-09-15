@@ -20,6 +20,14 @@ public record MethodInfo(int accessFlag, String name, String descriptor, List<At
                 .toList();
     }
 
+    public AttributeInfo.CodeAttribute getCode() {
+        return this.attributes.stream()
+                .filter(AttributeInfo.CodeAttribute.class::isInstance)
+                .findFirst()
+                .map(AttributeInfo.CodeAttribute.class::cast)
+                .orElse(null);
+    }
+
     @Override
     public String toString() {
         return name + descriptor;
