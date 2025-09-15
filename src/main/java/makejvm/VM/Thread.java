@@ -11,7 +11,7 @@ public class Thread {
         frames.add(frame);
     }
 
-    public void popFrame(Frame frame) {
+    public void popFrame() {
         frames.removeLast();
     }
 
@@ -22,5 +22,12 @@ public class Thread {
     public void execMethod(MethodInfo methodInfo) {
         Frame invokerFrame = this.currentFrame();
         pushFrame(Frame.of(methodInfo).setLocals(invokerFrame.popOperands(methodInfo.getNumArgs())));
+
+        while (true) {
+            Frame curFrame = currentFrame();
+            if (curFrame == invokerFrame) break;
+
+            InstructionSet.execInstr(this);
+        }
     }
 }

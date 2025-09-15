@@ -57,4 +57,11 @@ public class ClassFile {
     public List<MethodInfo> methods() {
         return methodInfos;
     }
+
+    public MethodInfo findMethod(String name, String desc) {
+        return methodInfos.stream()
+                .filter(m -> m.name() == name && m.descriptor() == desc)
+                .findFirst()
+                .orElse(null);
+    }
 }
